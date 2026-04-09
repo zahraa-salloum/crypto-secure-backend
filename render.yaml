@@ -1,0 +1,56 @@
+services:
+  - type: web
+    name: crypto-secure-backend
+    env: php
+    plan: free
+    buildCommand: >
+      composer install --no-dev --optimize-autoloader
+      && php artisan config:cache
+      && php artisan route:cache
+      && php artisan view:cache
+      && php artisan migrate --force
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      # Application
+      - key: APP_NAME
+        value: CryptoStream
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      - key: APP_URL
+        sync: false   # Set this to your Render URL, e.g. https://crypto-secure-backend.onrender.com
+      - key: APP_FRONTEND_URL
+        sync: false   # Set this to your Vercel URL, e.g. https://crypto-secure-frontend.vercel.app
+
+      # Database (copy values from Railway MySQL service)
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false   # Railway: from the MySQL service Variables tab
+      - key: DB_PORT
+        sync: false   # Railway: usually 3306 (public) or the TCP proxy port
+      - key: DB_DATABASE
+        sync: false   # Railway: database name
+      - key: DB_USERNAME
+        sync: false   # Railway: username
+      - key: DB_PASSWORD
+        sync: false   # Railway: password
+
+      # Cache / Queue / Session (file-based, no Redis needed for free tier)
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_DRIVER
+        value: file
+
+      # Mail (update with real SMTP creds for production)
+      - key: MAIL_MAILER
+        value: log
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@cryptostream.app
+      - key: MAIL_FROM_NAME
+        value: CryptoStream
