@@ -2,13 +2,12 @@
 
 Laravel-based REST API for the Stream Cipher RC4/A5 Cryptography Project.
 
-## 🚀 Quick Start
+## ?? Quick Start
 
 ### Prerequisites
 - PHP 8.2 or higher
 - Composer 2.0 or higher
 - MySQL 8.0 or higher
-- Redis 7.0 or higher
 
 ### Installation
 
@@ -22,13 +21,10 @@ cp .env.example .env
 # Generate application key
 php artisan key:generate
 
-## Configure database in .env
+# Configure database in .env
 
 # Run migrations
 php artisan migrate
-
-# Seed database (optional)
-php artisan db:seed
 
 # Start development server
 php artisan serve
@@ -36,18 +32,17 @@ php artisan serve
 
 The API will be available at `http://localhost:8000`
 
-## 📚 API Documentation
+## ?? API Documentation
 
 ### Base URL
 ```
-http://localhost:8000/api/v1
+http://localhost:8000/api
 ```
 
 ### Authentication
 Uses Laravel Sanctum for API token authentication.
 
 ### Response Format
-All API responses follow this structure:
 ```json
 {
   "success": true,
@@ -60,105 +55,101 @@ All API responses follow this structure:
 ### Endpoints
 
 #### Authentication
-- **POST** `/auth/register` - Register new user
-- **POST** `/auth/login` - Login user
-- **POST** `/auth/logout` - Logout user
-- **POST** `/auth/refresh` - Refresh token
-- **POST** `/auth/forgot-password` - Request password reset
-- **POST** `/auth/reset-password` - Reset password
-- **GET** `/auth/google` - Google OAuth redirect
-- **GET** `/auth/google/callback` - Google OAuth callback
+- **POST** `/api/auth/register` - Register new user
+- **POST** `/api/auth/login` - Login user
+- **POST** `/api/auth/logout` - Logout user (requires auth)
+- **GET** `/api/auth/me` - Get current user (requires auth)
+- **POST** `/api/auth/forgot-password` - Send password reset email
+- **POST** `/api/auth/reset-password` - Reset password with token
 
 #### User
-- **GET** `/user/profile` - Get user profile
-- **PUT** `/user/profile` - Update profile
-- **PUT** `/user/password` - Change password
-- **DELETE** `/user/account` - Delete account
+- **GET** `/api/user/profile` - Get profile (requires auth)
+- **PUT** `/api/user/profile` - Update name/avatar (requires auth)
+- **PUT** `/api/user/password` - Change password (requires auth)
+- **DELETE** `/api/user/account` - Delete account (requires auth)
 
-#### Encryption
-- **POST** `/encryption/text/encrypt` - Encrypt text
-- **POST** `/encryption/text/decrypt` - Decrypt text
-- **POST** `/encryption/file/encrypt` - Encrypt file
-- **POST** `/encryption/file/decrypt` - Decrypt file
+#### Encryption (Text)
+- **POST** `/api/encryption/encrypt` - Encrypt text with RC4 or A5/1
+- **POST** `/api/encryption/decrypt` - Decrypt text
 
 #### Chat
-- **GET** `/chat/conversations` - List conversations
-- **GET** `/chat/conversations/{id}/messages` - Get messages
-- **POST** `/chat/messages` - Send message
-- **DELETE** `/chat/messages/{id}` - Delete message
-- **PUT** `/chat/messages/{id}/read` - Mark as read
+- **GET** `/api/chat/conversations` - List conversations
+- **POST** `/api/chat/conversations` - Start a conversation
+- **GET** `/api/chat/conversations/{id}/messages` - Get messages
+- **POST** `/api/chat/messages` - Send encrypted message
+- **DELETE** `/api/chat/messages/{id}` - Delete message
 
 #### Files
-- **GET** `/files` - List user files
-- **POST** `/files/upload` - Upload file
-- **GET** `/files/{id}/download` - Download file
-- **POST** `/files/{id}/download-decrypted` - Download decrypted
-- **DELETE** `/files/{id}` - Delete file
-- **POST** `/files/share` - Share file
+- **GET** `/api/files` - List user files
+- **POST** `/api/files/upload` - Upload encrypted file
+- **GET** `/api/files/{id}/download` - Download encrypted file
+- **DELETE** `/api/files/{id}` - Delete file
 
-## 🏗️ Project Structure
+#### Admin (requires admin role)
+- **GET** `/api/admin/stats` - Platform statistics
+- **GET** `/api/admin/users` - List all users
+- **POST** `/api/admin/users` - Create a user
+- **POST** `/api/admin/users/{id}/ban` - Ban a user
+- **POST** `/api/admin/users/{id}/unban` - Unban a user
+
+## ??? Project Structure
 
 ```
 app/
-├── Http/
-│   ├── Controllers/
-│   │   ├── AuthController.php
-│   │   ├── UserController.php
-│   │   ├── EncryptionController.php
-│   │   ├── ChatController.php
-│   │   └── FileController.php
-│   ├── Middleware/
-│   │   └── RateLimitMiddleware.php
-│   └── Requests/
-│       ├── LoginRequest.php
-│       ├── RegisterRequest.php
-│       └── EncryptionRequest.php
-├── Models/
-│   ├── User.php
-│   ├── Message.php
-│   ├── File.php
-│   └── Conversation.php
-├── Services/
-│   ├── EncryptionService.php
-│   ├── ChatService.php
-│   └── FileService.php
-└── Repositories/
-    ├── UserRepository.php
-    ├── MessageRepository.php
-    └── FileRepository.php
++-- Http/
+�   +-- Controllers/
+�   �   +-- AuthController.php
+�   �   +-- UserController.php
+�   �   +-- EncryptionController.php
+�   �   +-- ChatController.php
+�   �   +-- FileController.php
+�   �   +-- AdminController.php
+�   +-- Middleware/
+�   �   +-- AdminMiddleware.php
+�   +-- Requests/
+�       +-- LoginRequest.php
+�       +-- RegisterRequest.php
++-- Models/
+�   +-- User.php
+�   +-- UserType.php
+�   +-- BannedEmail.php
+�   +-- Message.php
+�   +-- Conversation.php
+�   +-- EncryptedFile.php
++-- Services/
+    +-- RC4EncryptionService.php
+    +-- A51EncryptionService.php
+    +-- EncryptionService.php
 ```
 
-## 🔒 Security Features
+## ?? Security Features
 
 - **Authentication**: Laravel Sanctum API tokens
-- **Password Hashing**: Bcrypt with configurable rounds
-- **Input Validation**: Form Request validation
+- **Password Hashing**: Bcrypt
+- **Password Policy**: Min 8 chars, uppercase, number, special character
+- **Input Validation**: Form Request classes
 - **SQL Injection Protection**: Eloquent ORM
-- **XSS Protection**: Laravel's built-in escaping
-- **CSRF Protection**: Enabled for web routes
-- **Rate Limiting**: Configurable per endpoint
 - **CORS**: Configured for frontend origin
-- **Security Headers**: X-Frame-Options, X-Content-Type-Options, etc.
-- **File Upload Security**: Type validation, size limits
-- **Logging**: Security events logged without sensitive data
+- **Rate Limiting**: Applied on API routes
+- **Ban System**: Banned emails cannot register or login
+- **Role-Based Access**: Admin middleware on admin routes
+- **Client-Side Encryption**: Encryption keys never stored on server
 
-## 🧪 Testing
+## ?? Cryptographic Implementations
 
-```bash
-# Run all tests
-php artisan test
+### RC4 Stream Cipher
+Implementation of RC4 for educational purposes.
 
-# Run specific test
-php artisan test --filter=AuthenticationTest
+> ?? RC4 is deprecated and has known vulnerabilities. Used for educational demonstration only.
 
-# Run with coverage
-php artisan test --coverage
-```
+### A5/1 Stream Cipher
+Implementation of A5/1 used in GSM encryption.
 
-## 🔧 Configuration
+> ?? A5/1 has known weaknesses. Used for educational demonstration only.
+
+## ?? Configuration
 
 ### Database
-Configure in `.env`:
 ```env
 DB_CONNECTION=mysql
 DB_HOST=127.0.0.1
@@ -168,96 +159,71 @@ DB_USERNAME=root
 DB_PASSWORD=your_password
 ```
 
-### Redis
+### Mail
 ```env
-REDIS_HOST=127.0.0.1
-REDIS_PASSWORD=null
-REDIS_PORT=6379
+MAIL_MAILER=smtp
+MAIL_HOST=sandbox.smtp.mailtrap.io
+MAIL_PORT=2525
+MAIL_USERNAME=your_username
+MAIL_PASSWORD=your_password
+MAIL_ENCRYPTION=tls
 ```
 
-### CORS
+### Frontend URL (for password reset links)
 ```env
-CORS_ALLOWED_ORIGINS=http://localhost:4200
+APP_FRONTEND_URL=http://localhost:4200
 ```
 
-## 📦 Dependencies
+## ?? Key Dependencies
 
-### Core
 - Laravel 11
 - PHP 8.2+
-
-### Authentication
 - Laravel Sanctum
+- Guzzle HTTP
 
-### Cache & Queue
-- Redis (via Predis)
+## ?? Database Schema
 
-### HTTP Client
-- Guzzle
+### users
+- id, name, email, password, avatar, user_type_id, is_banned, encryption_count, timestamps
 
-## 🔐 Cryptographic Implementations
+### user_types
+- id (1=admin, 2=user), name
 
-### RC4 Stream Cipher
-Implementation of RC4 algorithm for educational purposes.
+### banned_emails
+- id, email, banned_by, reason, timestamps
 
-**Warning**: RC4 is deprecated and has known vulnerabilities.
+### conversations
+- id, user1_id, user2_id, encryption_key (client-side), algorithm, timestamps
 
-### A5/1 Stream Cipher
-Implementation of A5/1 algorithm used in GSM encryption.
+### messages
+- id, conversation_id, sender_id, content (encrypted), is_encrypted, timestamps
 
-**Warning**: A5/1 has known weaknesses and should not be used in production.
+### encrypted_files
+- id, user_id, original_filename, encrypted_filename, original_size, algorithm, timestamps
 
-## 🚢 Deployment
+## ?? Deployment
 
-### Production Checklist
-- [ ] Set `APP_DEBUG=false`
-- [ ] Set strong `APP_KEY`
-- [ ] Configure production database
-- [ ] Enable HTTPS
-- [ ] Set secure session configuration
-- [ ] Configure email service
-- [ ] Set up queue workers
-- [ ] Configure scheduled tasks
-- [ ] Enable Redis password authentication
-- [ ] Set up automated backups
+Deployed on **Render** (backend) with **Clever Cloud** (MySQL) and **Vercel** (frontend).
 
-## 📝 Database Schema
+Production checklist:
+- [x] `APP_DEBUG=false`
+- [x] Strong `APP_KEY` set
+- [x] Production database configured
+- [x] CORS set to Vercel frontend URL
+- [x] Mail configured via Mailtrap
 
-### Users
-- id, name, email, password, email_verified_at, timestamps
-
-### Messages
-- id, conversation_id, sender_id, content (encrypted), algorithm, is_encrypted, timestamps
-
-### Files
-- id, user_id, filename, original_filename, size, mime_type, algorithm, is_encrypted, timestamps
-
-### Conversations
-- id, user1_id, user2_id, timestamps
-
-## 🐛 Known Issues
-
-- Google OAuth needs client credentials configuration
-- WebSocket server needs separate process for chat
-- File virus scanning not implemented
-
-## 📖 Documentation
-
-- [Laravel Documentation](https://laravel.com/docs)
-- [Laravel Sanctum](https://laravel.com/docs/sanctum)
-- [Redis Documentation](https://redis.io/documentation)
-
-## 👥 Team
+## ?? Team
 
 - Zahraa Salloum
 - Mariam Abou Merhi
 - Mohammad Nassar
 - Tara Elkhoury
 
-## ⚠️ Security Notice
+## ?? Security Notice
 
-This is an educational project implementing deprecated cryptographic algorithms (RC4 and A5/1). These algorithms have known vulnerabilities and should NOT be used in production systems.
+This is an educational project implementing deprecated cryptographic algorithms (RC4 and A5/1). These algorithms have known vulnerabilities and should **NOT** be used in production systems.
 
-## 📄 License
+## ?? License
 
 MIT License - Educational use only
+
