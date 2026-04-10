@@ -1,0 +1,52 @@
+services:
+  - type: web
+    name: crypto-secure-backend
+    env: php
+    plan: free
+    buildCommand: >
+      composer install --no-dev --optimize-autoloader
+      && php artisan config:cache
+      && php artisan route:cache
+      && php artisan view:cache
+      && php artisan migrate --force
+    startCommand: php artisan serve --host=0.0.0.0 --port=$PORT
+    envVars:
+      - key: APP_NAME
+        value: CryptoStream
+      - key: APP_ENV
+        value: production
+      - key: APP_DEBUG
+        value: false
+      - key: APP_KEY
+        generateValue: true
+      # Set these manually in Render dashboard after deploying:
+      - key: APP_URL
+        sync: false
+      - key: APP_FRONTEND_URL
+        sync: false
+      # From Clever Cloud MySQL add-on:
+      - key: DB_CONNECTION
+        value: mysql
+      - key: DB_HOST
+        sync: false
+      - key: DB_PORT
+        sync: false
+      - key: DB_DATABASE
+        sync: false
+      - key: DB_USERNAME
+        sync: false
+      - key: DB_PASSWORD
+        sync: false
+      # File-based (no Redis needed)
+      - key: CACHE_DRIVER
+        value: file
+      - key: QUEUE_CONNECTION
+        value: sync
+      - key: SESSION_DRIVER
+        value: file
+      - key: MAIL_MAILER
+        value: log
+      - key: MAIL_FROM_ADDRESS
+        value: noreply@cryptostream.app
+      - key: MAIL_FROM_NAME
+        value: CryptoStream
