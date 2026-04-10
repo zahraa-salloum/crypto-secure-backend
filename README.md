@@ -1,8 +1,8 @@
-# Backend - CryptoSecure API
+﻿# Backend - CryptoSecure API
 
 Laravel-based REST API for the Stream Cipher RC4/A5 Cryptography Project.
 
-## ?? Quick Start
+## 🚀 Quick Start
 
 ### Prerequisites
 - PHP 8.2 or higher
@@ -32,7 +32,7 @@ php artisan serve
 
 The API will be available at `http://localhost:8000`
 
-## ?? API Documentation
+## 📚 API Documentation
 
 ### Base URL
 ```
@@ -92,37 +92,37 @@ Uses Laravel Sanctum for API token authentication.
 - **POST** `/api/admin/users/{id}/ban` - Ban a user
 - **POST** `/api/admin/users/{id}/unban` - Unban a user
 
-## ??? Project Structure
+## 🏗️ Project Structure
 
 ```
 app/
-+-- Http/
-�   +-- Controllers/
-�   �   +-- AuthController.php
-�   �   +-- UserController.php
-�   �   +-- EncryptionController.php
-�   �   +-- ChatController.php
-�   �   +-- FileController.php
-�   �   +-- AdminController.php
-�   +-- Middleware/
-�   �   +-- AdminMiddleware.php
-�   +-- Requests/
-�       +-- LoginRequest.php
-�       +-- RegisterRequest.php
-+-- Models/
-�   +-- User.php
-�   +-- UserType.php
-�   +-- BannedEmail.php
-�   +-- Message.php
-�   +-- Conversation.php
-�   +-- EncryptedFile.php
-+-- Services/
-    +-- RC4EncryptionService.php
-    +-- A51EncryptionService.php
-    +-- EncryptionService.php
+├── Http/
+│   ├── Controllers/
+│   │   ├── AuthController.php
+│   │   ├── UserController.php
+│   │   ├── EncryptionController.php
+│   │   ├── ChatController.php
+│   │   ├── FileController.php
+│   │   └── AdminController.php
+│   ├── Middleware/
+│   │   └── AdminMiddleware.php
+│   └── Requests/
+│       ├── LoginRequest.php
+│       └── RegisterRequest.php
+├── Models/
+│   ├── User.php
+│   ├── UserType.php
+│   ├── BannedEmail.php
+│   ├── Message.php
+│   ├── Conversation.php
+│   └── EncryptedFile.php
+└── Services/
+    ├── RC4EncryptionService.php
+    ├── A51EncryptionService.php
+    └── EncryptionService.php
 ```
 
-## ?? Security Features
+## 🔒 Security Features
 
 - **Authentication**: Laravel Sanctum API tokens
 - **Password Hashing**: Bcrypt
@@ -135,19 +135,19 @@ app/
 - **Role-Based Access**: Admin middleware on admin routes
 - **Client-Side Encryption**: Encryption keys never stored on server
 
-## ?? Cryptographic Implementations
+## 🔐 Cryptographic Implementations
 
 ### RC4 Stream Cipher
 Implementation of RC4 for educational purposes.
 
-> ?? RC4 is deprecated and has known vulnerabilities. Used for educational demonstration only.
+> ⚠️ RC4 is deprecated and has known vulnerabilities. Used for educational demonstration only.
 
 ### A5/1 Stream Cipher
 Implementation of A5/1 used in GSM encryption.
 
-> ?? A5/1 has known weaknesses. Used for educational demonstration only.
+> ⚠️ A5/1 has known weaknesses. Used for educational demonstration only.
 
-## ?? Configuration
+## ⚙️ Configuration
 
 ### Database
 ```env
@@ -174,14 +174,14 @@ MAIL_ENCRYPTION=tls
 APP_FRONTEND_URL=http://localhost:4200
 ```
 
-## ?? Key Dependencies
+## 📦 Key Dependencies
 
 - Laravel 11
 - PHP 8.2+
 - Laravel Sanctum
 - Guzzle HTTP
 
-## ?? Database Schema
+## 🗄️ Database Schema
 
 ### users
 - id, name, email, password, avatar, user_type_id, is_banned, encryption_count, timestamps
@@ -201,7 +201,7 @@ APP_FRONTEND_URL=http://localhost:4200
 ### encrypted_files
 - id, user_id, original_filename, encrypted_filename, original_size, algorithm, timestamps
 
-## ?? Deployment
+## 🚢 Deployment
 
 Deployed on **Render** (backend) with **Clever Cloud** (MySQL) and **Vercel** (frontend).
 
@@ -212,18 +212,17 @@ Production checklist:
 - [x] CORS set to Vercel frontend URL
 - [x] Mail configured via Mailtrap
 
-## ?? Team
+## 👥 Team
 
 - Zahraa Salloum
 - Mariam Abou Merhi
 - Mohammad Nassar
 - Tara Elkhoury
 
-## ?? Security Notice
+## ⚠️ Security Notice
 
 This is an educational project implementing deprecated cryptographic algorithms (RC4 and A5/1). These algorithms have known vulnerabilities and should **NOT** be used in production systems.
 
-## ?? License
+## 📄 License
 
 MIT License - Educational use only
-
