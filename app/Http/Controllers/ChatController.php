@@ -95,7 +95,7 @@ class ChatController extends Controller
         // Validate the request
         $validator = Validator::make($request->all(), [
             'email' => 'required|email',
-            'algorithm' => 'required|in:rc4,a51',
+            'algorithm' => 'required|in:rc4,a5/1,RC4,A5/1',
         ]);
 
         if ($validator->fails()) {
@@ -153,7 +153,7 @@ class ChatController extends Controller
             $conversation = Conversation::create([
                 'user_one_id' => $userId,
                 'user_two_id' => $otherUserId,
-                'algorithm' => $request->algorithm,
+                'algorithm' => strtoupper($request->algorithm),
                 // NO encryption_key - client handles all encryption!
             ]);
 
