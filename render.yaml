@@ -6,7 +6,7 @@ services:
     startCommand: ""
     envVars:
       - key: APP_NAME
-        value: CryptoStream
+        value: CryptoSecure
       - key: APP_ENV
         value: production
       - key: APP_DEBUG
@@ -41,6 +41,6 @@ services:
       - key: MAIL_MAILER
         value: log
       - key: MAIL_FROM_ADDRESS
-        value: noreply@cryptostream.app
+        value: noreply@cryptosecure.app
       - key: MAIL_FROM_NAME
-        value: CryptoStream
+        value: CryptoSecure
