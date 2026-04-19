@@ -211,7 +211,7 @@ class UserController extends Controller
         try {
             $user = auth()->user();
 
-            // Verify password for security (unless it's an OAuth account)
+            // Verify password for security
             if ($user->password && !Hash::check($request->password, $user->password)) {
                 return response()->json([
                     'success' => false,

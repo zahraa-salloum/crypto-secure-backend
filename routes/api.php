@@ -35,9 +35,6 @@ Route::middleware('auth:sanctum')->group(function () {
     
     // Encryption operations
     Route::prefix('encryption')->group(function () {
-        Route::post('/encrypt', [EncryptionController::class, 'encryptText']);
-        Route::post('/decrypt', [EncryptionController::class, 'decryptText']);
-        Route::post('/generate-key', [EncryptionController::class, 'generateKey']);
         Route::post('/increment-count', [EncryptionController::class, 'incrementCount']);
     });
     
@@ -47,7 +44,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/upload', [FileController::class, 'upload']);
         Route::get('/{id}/download', [FileController::class, 'download']);
         Route::delete('/{id}', [FileController::class, 'delete']);
-        Route::post('/{id}/share', [FileController::class, 'share']);
     });
     
     // Chat/Conversations
@@ -79,9 +75,6 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/users/{userId}/unban', [AdminController::class, 'unbanUser']);
     });
 });
-
-// Public file sharing route (no auth required) - for shared file links
-Route::get('/files/shared/{token}', [FileController::class, 'downloadShared']);
 
 // Health check endpoint
 Route::get('/health', function () {
