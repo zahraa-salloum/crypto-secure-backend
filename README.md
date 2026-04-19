@@ -68,10 +68,6 @@ Uses Laravel Sanctum for API token authentication.
 - **PUT** `/api/user/password` - Change password (requires auth)
 - **DELETE** `/api/user/account` - Delete account (requires auth)
 
-#### Encryption (Text)
-- **POST** `/api/encryption/encrypt` - Encrypt text with RC4 or A5/1
-- **POST** `/api/encryption/decrypt` - Decrypt text
-
 #### Chat
 - **GET** `/api/chat/conversations` - List conversations
 - **POST** `/api/chat/conversations` - Start a conversation
@@ -116,10 +112,6 @@ app/
 │   ├── Message.php
 │   ├── Conversation.php
 │   └── EncryptedFile.php
-└── Services/
-    ├── RC4EncryptionService.php
-    ├── A51EncryptionService.php
-    └── EncryptionService.php
 ```
 
 ## 🔒 Security Features
@@ -134,18 +126,6 @@ app/
 - **Ban System**: Banned emails cannot register or login
 - **Role-Based Access**: Admin middleware on admin routes
 - **Client-Side Encryption**: Encryption keys never stored on server
-
-## 🔐 Cryptographic Implementations
-
-### RC4 Stream Cipher
-Implementation of RC4 for educational purposes.
-
-> ⚠️ RC4 is deprecated and has known vulnerabilities. Used for educational demonstration only.
-
-### A5/1 Stream Cipher
-Implementation of A5/1 used in GSM encryption.
-
-> ⚠️ A5/1 has known weaknesses. Used for educational demonstration only.
 
 ## ⚙️ Configuration
 
