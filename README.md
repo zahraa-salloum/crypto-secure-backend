@@ -58,6 +58,7 @@ Uses Laravel Sanctum for API token authentication.
 - **POST** `/api/auth/register` - Register new user
 - **POST** `/api/auth/login` - Login user
 - **POST** `/api/auth/logout` - Logout user (requires auth)
+- **POST** `/api/auth/refresh` - Refresh token (requires auth)
 - **GET** `/api/auth/me` - Get current user (requires auth)
 - **POST** `/api/auth/forgot-password` - Send password reset email
 - **POST** `/api/auth/reset-password` - Reset password with token
@@ -72,8 +73,8 @@ Uses Laravel Sanctum for API token authentication.
 - **GET** `/api/chat/conversations` - List conversations
 - **POST** `/api/chat/conversations` - Start a conversation
 - **GET** `/api/chat/conversations/{id}/messages` - Get messages
-- **POST** `/api/chat/messages` - Send encrypted message
-- **DELETE** `/api/chat/messages/{id}` - Delete message
+- **POST** `/api/chat/conversations/{id}/messages` - Send encrypted message
+- **POST** `/api/chat/conversations/{id}/mark-read` - Mark messages as read
 
 #### Files
 - **GET** `/api/files` - List user files
@@ -126,6 +127,7 @@ app/
 - **Ban System**: Banned emails cannot register or login
 - **Role-Based Access**: Admin middleware on admin routes
 - **Client-Side Encryption**: Encryption keys never stored on server
+- **Token Rotation**: `/auth/refresh` revokes old token and issues a new one
 
 ## ⚙️ Configuration
 
@@ -176,7 +178,7 @@ APP_FRONTEND_URL=http://localhost:4200
 - id, user1_id, user2_id, encryption_key (client-side), algorithm, timestamps
 
 ### messages
-- id, conversation_id, sender_id, content (encrypted), is_encrypted, timestamps
+- id, conversation_id, sender_id, encrypted_content, nonce (per-message, used to derive unique keystream), algorithm, timestamps
 
 ### encrypted_files
 - id, user_id, original_filename, encrypted_filename, original_size, algorithm, timestamps
