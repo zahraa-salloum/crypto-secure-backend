@@ -138,6 +138,47 @@ class AuthController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
+    /**
+     * Refresh authentication token
+     * Revokes the current token and issues a new one
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function refresh(Request $request): JsonResponse
+    {
+        try {
+            $user = $request->user();
+
+            // Revoke only the current token
+            $request->user()->currentAccessToken()->delete();
+
+            // Issue a fresh token
+            $token = $user->createToken('auth_token')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Token refreshed',
+                'data'    => [
+                    'token' => $token,
+                    'user'  => [
+                        'id'           => $user->id,
+                        'name'         => $user->name,
+                        'email'        => $user->email,
+                        'user_type_id' => $user->user_type_id,
+                        'isAdmin'      => $user->isAdmin(),
+                    ],
+                ],
+            ], 200);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Token refresh failed',
+                'errors'  => [$e->getMessage()],
+            ], 500);
+        }
+    }
+
     public function logout(Request $request): JsonResponse
     {
         try {
