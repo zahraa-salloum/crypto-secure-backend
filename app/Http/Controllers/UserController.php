@@ -29,14 +29,15 @@ class UserController extends Controller
                 'success' => true,
                 'message' => 'Profile retrieved successfully',
                 'data' => [
-                    'id'           => $user->id,
-                    'name'         => $user->name,
-                    'email'        => $user->email,
-                    'avatar'       => $user->avatar,
-                    'google_id'    => $user->google_id,
-                    'user_type_id' => $user->user_type_id,
-                    'isAdmin'      => $user->isAdmin(),
-                    'created_at'   => $user->created_at->toISOString(),
+                    'id'               => $user->id,
+                    'name'             => $user->name,
+                    'email'            => $user->email,
+                    'avatar'           => $user->avatar,
+                    'google_id'        => $user->google_id,
+                    'user_type_id'     => $user->user_type_id,
+                    'isAdmin'          => $user->isAdmin(),
+                    'theme_preference' => $user->theme_preference ?? 'light',
+                    'created_at'       => $user->created_at->toISOString(),
                 ]
             ], 200);
 
@@ -59,8 +60,9 @@ class UserController extends Controller
     {
         // Validate the request
         $validator = Validator::make($request->all(), [
-            'name' => 'sometimes|required|string|max:255',
-            'avatar' => 'sometimes|nullable|url|max:500',
+            'name'             => 'sometimes|required|string|max:255',
+            'avatar'           => 'sometimes|nullable|url|max:500',
+            'theme_preference' => 'sometimes|in:light,dark',
         ]);
 
         if ($validator->fails()) {
@@ -81,6 +83,9 @@ class UserController extends Controller
             }
             if ($request->has('avatar')) {
                 $updateData['avatar'] = $request->avatar;
+            }
+            if ($request->has('theme_preference')) {
+                $updateData['theme_preference'] = $request->theme_preference;
             }
 
             // Update the user

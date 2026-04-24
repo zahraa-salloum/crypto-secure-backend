@@ -65,7 +65,7 @@ Uses Laravel Sanctum for API token authentication.
 
 #### User
 - **GET** `/api/user/profile` - Get profile (requires auth)
-- **PUT** `/api/user/profile` - Update name/avatar (requires auth)
+- **PUT** `/api/user/profile` - Update name / avatar / theme_preference (requires auth)
 - **PUT** `/api/user/password` - Change password (requires auth)
 - **DELETE** `/api/user/account` - Delete account (requires auth)
 
@@ -171,7 +171,7 @@ APP_FRONTEND_URL=http://localhost:4200
 ## 🗄️ Database Schema
 
 ### users
-- id, name, email, password, avatar, user_type_id, is_banned, encryption_count, timestamps
+- id, name, email, password, avatar, theme_preference (light/dark), user_type_id, is_banned, encryption_count, timestamps
 
 ### user_types
 - id (1=admin, 2=user), name

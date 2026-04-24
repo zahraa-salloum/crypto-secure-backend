@@ -27,6 +27,7 @@ class User extends Authenticatable
         'password',
         'google_id',
         'avatar',
+        'theme_preference',
         'user_type_id',
         'is_banned',
     ];
@@ -50,6 +51,7 @@ class User extends Authenticatable
         'email_verified_at' => 'datetime',
         'password' => 'hashed',
         'is_banned' => 'boolean',
+        'theme_preference' => 'string',
     ];
 
     /**
