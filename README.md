@@ -75,6 +75,9 @@ Uses Laravel Sanctum for API token authentication.
 - **GET** `/api/chat/conversations/{id}/messages` - Get messages
 - **POST** `/api/chat/conversations/{id}/messages` - Send encrypted message
 - **POST** `/api/chat/conversations/{id}/mark-read` - Mark messages as read
+- **GET** `/api/chat/unread-count` - Get total unread message count
+- **GET** `/api/chat/files/{id}/download` - Download a file shared in chat (auth + shared-conversation check)
+- **POST** `/api/chat/files/check-exists` - Batch check which shared file IDs still exist (`{ ids: [...] }` → `{ deleted: [...] }`)
 
 #### Files
 - **GET** `/api/files` - List user files
@@ -127,6 +130,8 @@ app/
 - **Ban System**: Banned emails cannot register or login
 - **Role-Based Access**: Admin middleware on admin routes
 - **Client-Side Encryption**: Encryption keys never stored on server
+- **File Sharing**: Shared file download requires requester to share a conversation with the file owner; key is never included in the message — recipient must enter it manually
+- **Deleted File Detection**: `POST /chat/files/check-exists` lets the frontend hide Download buttons for files that no longer exist, without exposing access control details
 - **Token Rotation**: `/auth/refresh` revokes old token and issues a new one
 
 ## ⚙️ Configuration

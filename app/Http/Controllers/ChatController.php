@@ -5,9 +5,11 @@ namespace App\Http\Controllers;
 use App\Models\Conversation;
 use App\Models\Message;
 use App\Models\User;
+use App\Models\EncryptedFile;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 
 /**
  * ChatController - CLIENT-SIDE ENCRYPTION
@@ -414,5 +416,92 @@ class ChatController extends Controller
                 'errors' => [$e->getMessage()]
             ], 500);
         }
+    }
+
+    /**
+     * Download a file that was shared in a chat conversation.
+     * Authorization: requester must share a conversation with the file owner.
+     * The file is returned as-is (still encrypted); client decrypts with the
+     * key embedded in the chat message.
+     *
+     * @param int $fileId
+     * @return \Illuminate\Http\Response|\Illuminate\Http\JsonResponse
+     */
+    public function downloadSharedFile($fileId)
+    {
+        try {
+            $userId = auth()->id();
+
+            // Find the file (may belong to another user)
+            $file = EncryptedFile::findOrFail($fileId);
+
+            // If the requester owns the file, allow directly
+            if ($file->user_id !== $userId) {
+                // Otherwise verify they share a conversation with the file owner
+                $sharedConversation = Conversation::where(function ($q) use ($userId, $file) {
+                    $q->where('user_one_id', $userId)->where('user_two_id', $file->user_id);
+                })->orWhere(function ($q) use ($userId, $file) {
+                    $q->where('user_one_id', $file->user_id)->where('user_two_id', $userId);
+                })->exists();
+
+                if (!$sharedConversation) {
+                    return response()->json([
+                        'success' => false,
+                        'message' => 'Access denied: no shared conversation with file owner'
+                    ], 403);
+                }
+            }
+
+            $encryptedPath = 'encrypted_files/' . $file->encrypted_filename;
+            if (!Storage::exists($encryptedPath)) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'File not found in storage'
+                ], 404);
+            }
+
+            return response()->streamDownload(function () use ($encryptedPath) {
+                echo Storage::get($encryptedPath);
+            }, $file->encrypted_filename, [
+                'Content-Type' => 'application/octet-stream',
+                'X-Original-Filename' => $file->original_filename,
+                'X-Algorithm' => $file->algorithm,
+                'X-Original-Size' => $file->file_size,
+            ]);
+
+        } catch (\Illuminate\Database\Eloquent\ModelNotFoundException $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File not found'
+            ], 404);
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File download failed',
+                'errors' => [$e->getMessage()]
+            ], 500);
+        }
+    }
+
+    /**
+     * Batch-check which of the given file IDs still exist and are accessible.
+     * Returns the subset of IDs that are gone (deleted from DB or storage).
+     */
+    public function checkFilesExist(Request $request)
+    {
+        $ids = $request->input('ids', []);
+
+        if (empty($ids) || !is_array($ids)) {
+            return response()->json(['deleted' => []]);
+        }
+
+        // Clamp to a reasonable limit to prevent abuse
+        $ids = array_slice(array_map('intval', $ids), 0, 100);
+
+        $userId = auth()->id();
+        $existing = EncryptedFile::whereIn('id', $ids)->pluck('id')->toArray();
+        $deleted = array_values(array_diff($ids, $existing));
+
+        return response()->json(['deleted' => $deleted]);
     }
 }

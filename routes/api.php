@@ -55,6 +55,8 @@ Route::middleware('auth:sanctum')->group(function () {
         Route::post('/conversations/{id}/messages', [ChatController::class, 'sendMessage']);
         Route::post('/conversations/{id}/mark-read', [ChatController::class, 'markAsRead']);
         Route::get('/unread-count', [ChatController::class, 'getUnreadCount']);
+        Route::get('/files/{fileId}/download', [ChatController::class, 'downloadSharedFile']);
+        Route::post('/files/check-exists', [ChatController::class, 'checkFilesExist']);
     });
     
     // User profile and management
